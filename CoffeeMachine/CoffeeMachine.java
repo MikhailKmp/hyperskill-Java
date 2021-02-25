@@ -1,50 +1,72 @@
 import java.util.Scanner;
 
 public class CoffeeMachine {
-    int water = 400;
-    int milk = 540;
-    int beans = 120;
-    int cup = 9;
-    int money = 550;
+    State state;
+    int water;
+    int milk;
+    int beans;
+    int cup;
+    int money;
+    boolean work;
+
+    public CoffeeMachine() {
+        state = State.CHOOSING_ACTION;
+        water = 400;
+        milk = 540;
+        beans = 120;
+        cup = 9;
+        money = 550;
+        work = true;
+    }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         CoffeeMachine coffeeMachine = new CoffeeMachine();
-        Boolean work;
+
+        coffeeMachine.printChoose();
 
         do{
-            work = coffeeMachine.selectAction();
-        } while (work);
+            coffeeMachine.selectAction(scanner.next());
+        } while (coffeeMachine.work);
 
     }
 
-    public boolean selectAction(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Write action (buy, fill, take, remaining, exit):");
-        String s = scanner.next();
-        switch (s){
-            case "buy":
-                buy();
+    public void selectAction(String string){
+        switch (state){
+            case CHOOSING_ACTION:
+                switch (string){
+                    case "buy":
+                        state = State.CHOOSING_COFFEE;
+                        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+                        break;
+                    case "fill":
+                        fill();
+                        printChoose();
+                        break;
+                    case "take":
+                        take();
+                        printChoose();
+                        break;
+                    case "remaining":
+                        remaining();
+                        printChoose();
+                        break;
+                    case "exit":
+                        work = false;
+                        break;
+                }
                 break;
-            case "fill":
-                fill();
+            case CHOOSING_COFFEE:
+                buy(string);
+                state = State.CHOOSING_ACTION;
+                printChoose();
                 break;
-            case "take":
-                take();
-                break;
-            case "remaining":
-                remaining();
-                break;
-            case "exit":
-                return false;
+
         }
-        return true;
     }
 
-    public void buy(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
-        String n = scanner.next();
-        switch (n){
+    public void buy(String s){
+        switch (s){
             case "1":
                 if(checkAmountOfCoffee(250, 1, 16, 1)){
                     water -= 250;
@@ -135,4 +157,12 @@ public class CoffeeMachine {
             return false;
         }
     }
+
+    public void printChoose(){
+        System.out.println("Write action (buy, fill, take, remaining, exit):");
+    }
+}
+
+enum State{
+    CHOOSING_ACTION, CHOOSING_COFFEE
 }
