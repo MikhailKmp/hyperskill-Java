@@ -10,7 +10,7 @@ public class CoffeeMachine {
     boolean work;
 
     public CoffeeMachine() {
-        state = State.CHOOSING_ACTION;
+        state = new ChoosingAction(this);
         water = 400;
         milk = 540;
         beans = 120;
@@ -19,56 +19,18 @@ public class CoffeeMachine {
         work = true;
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        CoffeeMachine coffeeMachine = new CoffeeMachine();
-
-        coffeeMachine.printChoose();
-
-        do{
-            coffeeMachine.selectAction(scanner.next());
-        } while (coffeeMachine.work);
-
+    public void changeState(State state) {
+        this.state = state;
     }
 
-    public void selectAction(String string){
-        switch (state){
-            case CHOOSING_ACTION:
-                switch (string){
-                    case "buy":
-                        state = State.CHOOSING_COFFEE;
-                        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
-                        break;
-                    case "fill":
-                        fill();
-                        printChoose();
-                        break;
-                    case "take":
-                        take();
-                        printChoose();
-                        break;
-                    case "remaining":
-                        remaining();
-                        printChoose();
-                        break;
-                    case "exit":
-                        work = false;
-                        break;
-                }
-                break;
-            case CHOOSING_COFFEE:
-                buy(string);
-                state = State.CHOOSING_ACTION;
-                printChoose();
-                break;
-
-        }
+    public State getState() {
+        return state;
     }
 
-    public void buy(String s){
+    public void buy(String s) {
         switch (s){
             case "1":
-                if(checkAmountOfCoffee(250, 1, 16, 1)){
+                if(checkAmountOfCoffee(250, 1, 16, 1)) {
                     water -= 250;
                     beans -= 16;
                     money +=  4;
@@ -76,7 +38,7 @@ public class CoffeeMachine {
                 }
                 break;
             case "2":
-                if(checkAmountOfCoffee(350, 75, 20, 1)){
+                if(checkAmountOfCoffee(350, 75, 20, 1)) {
                     water -= 350;
                     milk -= 75;
                     beans -= 20;
@@ -85,7 +47,7 @@ public class CoffeeMachine {
                 }
                 break;
             case "3":
-                if(checkAmountOfCoffee(200, 100, 12, 1)){
+                if(checkAmountOfCoffee(200, 100, 12, 1)) {
                     water -= 200;
                     milk -= 100;
                     beans -= 12;
@@ -98,7 +60,7 @@ public class CoffeeMachine {
         }
     }
 
-    public void fill(){
+    public void fill() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Write how many ml of water do you want to add:");
@@ -112,15 +74,14 @@ public class CoffeeMachine {
 
         System.out.println("Write how many disposable cups of coffee do you want to add:");
         cup += scanner.nextInt();
-
     }
 
-    public void take(){
+    public void take() {
         System.out.println("I gave you $" + money);
         money = 0;
     }
 
-    public void remaining(){
+    public void remaining() {
         System.out.println("The coffee machine has:\n" +
                 water + " of water\n" +
                 milk + " of milk\n" +
@@ -129,7 +90,7 @@ public class CoffeeMachine {
                 money + " of money");
     }
 
-    public boolean checkAmountOfCoffee(int water, int milk, int beans, int n){
+    public boolean checkAmountOfCoffee(int water, int milk, int beans, int n) {
         int w = this.water / water;
         int m = this.milk / milk;
         int g = this.beans / beans;
@@ -158,11 +119,7 @@ public class CoffeeMachine {
         }
     }
 
-    public void printChoose(){
+    public void printChoose() {
         System.out.println("Write action (buy, fill, take, remaining, exit):");
     }
-}
-
-enum State{
-    CHOOSING_ACTION, CHOOSING_COFFEE
 }
