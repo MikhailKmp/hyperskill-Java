@@ -5,10 +5,10 @@ public class Game {
     private int bulls;
     private int cows;
     private int length;
-    private int random;
-    private int answer;
+    private long random;
+    private long answer;
 
-    public void setAnswer(int answer) {
+    public void setAnswer(long answer) {
         this.answer = answer;
     }
 
@@ -19,13 +19,13 @@ public class Game {
     public void start() {
         Scanner scanner = new Scanner(System.in);
 
-        setLength(4);
+        if (!checkLength(scanner.nextInt())) {
+            return;
+        }
+
         generate();
 
-        setAnswer(scanner.nextInt());
-
-        calculateBullsAndCows();
-        printResult();
+        System.out.println("The random secret number is " + random + ".");
 
         scanner.close();
     }
@@ -33,18 +33,26 @@ public class Game {
     private void generate() {
         Random random = new Random();
 
+        long mult = (long) Math.pow(10, length - 1);
         int[] arr = new int[length];
-        int result = 0;
-        int mult = 1;
+        long result = 0;
+        boolean zero = false;
         int n;
 
         for (int i = 0; i < length; i++) {
             do {
                 n = random.nextInt(10);
+                if (!zero && n == 0 && i != 0){
+                    zero = true;
+                    break;
+                }
             } while (repeatCheck(arr, n));
-            result += n * mult;
-            mult *= 10;
+
+            if (n != 0)
+                result += n * mult;
+
             arr[i] = n;
+            mult /= 10;
         }
         this.random = result;
     }
@@ -73,10 +81,10 @@ public class Game {
         }
     }
 
-    private int[] convertNumberToArray(int number) {
+    private int[] convertNumberToArray(long number) {
         int[] arr = new int[length];
         for (int i = arr.length - 1; i >= 0 ; i--) {
-            arr[i] = number % 10;
+            arr[i] = (int) (number % 10);
             number /= 10;
         }
         return arr;
@@ -89,5 +97,14 @@ public class Game {
         else {
             System.out.println("Grade: " + bulls + " bull(s) and " + cows + " cow(s). The secret code is " + random + ".");
         }
+    }
+
+    private boolean checkLength(int length) {
+        if (length > 10) {
+            System.out.println("Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.");
+            return false;
+        }
+        setLength(length);
+        return true;
     }
 }
