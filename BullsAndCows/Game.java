@@ -19,13 +19,22 @@ public class Game {
     public void start() {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.println("Please, enter the secret code's length:");
         if (!checkLength(scanner.nextInt())) {
             return;
         }
+        System.out.println("Okay, let's start a game!");
 
         generate();
 
-        System.out.println("The random secret number is " + random + ".");
+        int i = 1;
+        while (bulls != length) {
+            System.out.println("Turn " + i + ":");
+            setAnswer(scanner.nextLong());
+            calculateBullsAndCows();
+            printResult();
+            i++;
+        }
 
         scanner.close();
     }
@@ -67,6 +76,8 @@ public class Game {
     }
 
     private void calculateBullsAndCows() {
+        bulls = 0;
+        cows = 0;
         int[] arrAnswer = convertNumberToArray(answer);
         int[] arrRandom = convertNumberToArray(random);
 
@@ -91,11 +102,23 @@ public class Game {
     }
 
     private void printResult() {
-        if (bulls == 0 && cows == 0) {
-            System.out.println("Grade: None. The secret code is " + random + ".");
+        String bull = "bull";
+        String cow = "cow";
+
+        if (bulls > 1)
+            bull = "bulls";
+        if (cows > 1)
+            cow = "cows";
+
+        if (bulls == length) {
+            System.out.println("Grade: " + bulls + " " + bull + "\n" +
+                                "Congratulations! You guessed the secret code.");
+        }
+        else if (bulls == 0 && cows == 0) {
+            System.out.println("Grade: None.");
         }
         else {
-            System.out.println("Grade: " + bulls + " bull(s) and " + cows + " cow(s). The secret code is " + random + ".");
+            System.out.println("Grade: " + bulls + " " + bull + " and " + cows + " " + cow);
         }
     }
 
