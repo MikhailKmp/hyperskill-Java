@@ -1,3 +1,5 @@
+package machine;
+
 public abstract class State {
     public CoffeeMachine coffeeMachine;
 

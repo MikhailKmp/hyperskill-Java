@@ -1,3 +1,5 @@
+package machine;
+
 public class ChoosingAction extends State {
 
     public ChoosingAction(CoffeeMachine coffeeMachine) {
