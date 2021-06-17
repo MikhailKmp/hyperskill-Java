@@ -15,19 +15,17 @@ public class Game {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Input the length of the secret code:");
-        do {
-            length = Integer.parseInt(scanner.nextLine());
-        } while (!checkLength());
+        if (!setLength(scanner.nextLine())) {
+            return;
+        }
 
         System.out.println("Input the number of possible symbols in the code:");
-        do {
-            characterRange = Integer.parseInt(scanner.nextLine());
-        } while (!checkCharacterRange());
+        if (!setCharacterRange(scanner.nextLine())) {
+            return;
+        }
 
         printInfo();
-
         System.out.println("Okay, let's start a game!");
-
         generate();
 
         int i = 1;
@@ -54,7 +52,6 @@ public class Game {
         }
         this.random = result.toString();
     }
-
 
     private void calculateBullsAndCows() {
         bulls = 0;
@@ -86,7 +83,7 @@ public class Game {
 
         if (bulls == length) {
             System.out.println("Grade: " + bulls + " " + bull + "\n" +
-                    "Congratulations! You guessed the secret code.");
+                                "Congratulations! You guessed the secret code.");
         }
         else if (bulls == 0 && cows == 0) {
             System.out.println("Grade: None.");
@@ -96,17 +93,50 @@ public class Game {
         }
     }
 
-    private boolean checkLength() {
-        if (length > 36) {
-            System.out.println("Error: can't generate a secret number with a length of " + length + " because there aren't enough unique characters. Re-enter.");
+    private boolean setLength(String string) {
+        if (!numberInputValidation(string)){
+            return false;
+        }
+        length = Integer.parseInt(string);
+
+        if (length == 0) {
+            System.out.println("Error: length cannot be 0.");
+            return false;
+        }
+        else if (length > 36) {
+            System.out.println("Error: maximum code length is 36 (0-9, a-z).");
             return false;
         }
         return true;
     }
 
-    private boolean checkCharacterRange() {
-        if (characterRange < length) {
-            System.out.println("The range cannot be less than the length. Re-enter.");
+    private boolean setCharacterRange(String string) {
+        if (!numberInputValidation(string)){
+            return false;
+        }
+        characterRange = Integer.parseInt(string);
+
+        if (characterRange > 36) {
+            System.out.println("Error: maximum number of possible symbols in the code is 36 (0-9, a-z).");
+            return false;
+        }
+        else if (characterRange < length) {
+            System.out.println("Error: it's not possible to generate a code with a length of " +
+                    length +
+                    " with " +
+                    characterRange +
+                    " unique symbols.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean numberInputValidation(String input) {
+        try {
+            int number = Integer.parseInt(input);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Error: \"" + input + "\" isn't a valid number.");
             return false;
         }
         return true;
